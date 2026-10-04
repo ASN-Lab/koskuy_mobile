@@ -12,7 +12,18 @@ class AuthService {
     return await _storage.read(key: _keyToken);
   }
 
+  static const _keyRole = 'user_role';
+
+  static Future<void> saveRole(String role) async {
+    await _storage.write(key: _keyRole, value: role);
+  }
+
+  static Future<String?> getRole() async {
+    return await _storage.read(key: _keyRole);
+  }
+
   static Future<void> logout() async {
     await _storage.delete(key: _keyToken);
+    await _storage.delete(key: _keyRole);
   }
 }

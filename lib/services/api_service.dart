@@ -91,6 +91,7 @@ class ApiService {
     final data = json.decode(response.body);
     if (response.statusCode == 200 && data['success'] == true) {
       await AuthService.saveToken(data['data']['token']);
+      await AuthService.saveRole(data['data']['user']['role'] ?? 'student');
       return data['data'];
     } else {
       throw Exception(data['message'] ?? 'Login gagal');
@@ -137,5 +138,51 @@ class ApiService {
     if (response.statusCode != 201) {
       throw Exception(data['message'] ?? 'Gagal melakukan booking');
     }
+  }
+
+  static Future<List<dynamic>> getMyBookings() async {
+    final token = await AuthService.getToken();
+    final response = await http.get(
+      Uri.parse('${ApiConfig.baseUrl}/my-bookings'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    if (response.statusCode == 200) {
+      return json.decode(response.body)['data'];
+    }
+    throw Exception('Gagal memuat riwayat booking');
+  }
+
+  static Future<void> cancelBooking(int id) async {
+    final token = await AuthService.getToken();
+    final response = await http.post(
+      Uri.parse('${ApiConfig.baseUrl}/bookings/$id/cancel'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Gagal membatalkan booking');
+    }
+  }
+
+  static Future<void> buyThrift(int id) async {
+    final token = await AuthService.getToken();
+    final response = await http.post(
+      Uri.parse('${ApiConfig.baseUrl}/thrift/$id/purchase'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Gagal membeli barang');
+    }
+  }
+
+  static Future<List<dynamic>> getMyPurchases() async {
+    final token = await AuthService.getToken();
+    final response = await http.get(
+      Uri.parse('${ApiConfig.baseUrl}/my-purchases'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    if (response.statusCode == 200) {
+      return json.decode(response.body)['data'];
+    }
+    throw Exception('Gagal memuat riwayat pembelian');
   }
 }

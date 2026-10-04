@@ -23,6 +23,20 @@ class _ThriftDetailScreenState extends State<ThriftDetailScreen> {
     _future = ApiService.getThriftDetail(widget.productId);
   }
 
+  Future<void> _buyProduct() async {
+    try {
+      await ApiService.buyThrift(widget.productId);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Pembelian berhasil')));
+      setState(() {
+        _future = ApiService.getThriftDetail(widget.productId);
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,6 +108,16 @@ class _ThriftDetailScreenState extends State<ThriftDetailScreen> {
                     onPressed: () => _launchWhatsApp(product.seller!.phone!, product.title),
                   ),
                 ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo, padding: const EdgeInsets.all(16)),
+                  icon: const Icon(Icons.shopping_cart),
+                  label: Text(product.isSold ? 'Sudah Terjual' : 'Beli Barang'),
+                  onPressed: product.isSold ? null : _buyProduct,
+                ),
+              ),
               const SizedBox(height: 24),
             ],
           ),
