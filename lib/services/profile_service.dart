@@ -18,7 +18,7 @@ class ProfileService {
       final jsonResponse = json.decode(response.body);
       return jsonResponse['data'];
     } else {
-      throw Exception('Gagal memuat profil');
+      throw Exception('Gagal memuat profil: ${response.statusCode} - ${response.body}');
     }
   }
 }
