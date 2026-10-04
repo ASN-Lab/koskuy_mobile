@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../config/api_config.dart';
 import '../models/kos.dart';
+import '../screens/booking_screen.dart';
 import '../services/api_service.dart';
 
 class KosDetailScreen extends StatefulWidget {

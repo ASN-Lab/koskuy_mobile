@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/api_service_auth.dart';
+import '../services/api_service.dart';
 
 class BookingScreen extends StatefulWidget {
   final int kosId;

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:koskuy_mobile/screens/home_screen.dart';
+import 'package:koskuy_mobile/screens/kos_list_screen.dart';
+import 'package:koskuy_mobile/screens/thrift_list_screen.dart';
 import 'package:koskuy_mobile/screens/login_screen.dart';
 import 'package:koskuy_mobile/screens/register_screen.dart';
 import 'package:koskuy_mobile/services/auth_service.dart';
