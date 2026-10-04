@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:koskuy_mobile/services/api_service_auth.dart';
+import 'package:koskuy_mobile/services/api_service.dart';
 
 class UploadThriftScreen extends StatefulWidget {
   const UploadThriftScreen({super.key});

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
-import '../services/auth_service.dart';
 import '../widgets/kos_card.dart';
 import '../widgets/thrift_card.dart';
 import '../screens/kos_detail_screen.dart';
