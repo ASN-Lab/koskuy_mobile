@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
-import 'screens/kos_list_screen.dart';
-import 'screens/thrift_list_screen.dart';
+import 'package:koskuy_mobile/screens/login_screen.dart';
+import 'package:koskuy_mobile/screens/register_screen.dart';
+import 'package:koskuy_mobile/services/auth_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,11 +14,31 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'KosKuy',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-        useMaterial3: true,
-      ),
-      home: const MainScreen(),
+      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo), useMaterial3: true),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const AuthWrapper(),
+        '/home': (context) => const MainScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
+      },
+    );
+  }
+}
+
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<String?>(
+      future: AuthService.getToken(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
+        return snapshot.data != null ? const MainScreen() : const LoginScreen();
+      },
     );
   }
 }
