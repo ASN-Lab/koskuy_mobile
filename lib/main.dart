@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:koskuy_mobile/screens/home_screen.dart';
 import 'package:koskuy_mobile/screens/kos_list_screen.dart';
 import 'package:koskuy_mobile/screens/thrift_list_screen.dart';
+import 'package:koskuy_mobile/screens/profile_screen.dart';
 import 'package:koskuy_mobile/screens/login_screen.dart';
 import 'package:koskuy_mobile/screens/register_screen.dart';
 import 'package:koskuy_mobile/services/auth_service.dart';
@@ -59,6 +60,7 @@ class _MainScreenState extends State<MainScreen> {
     HomeScreen(),
     KosListScreen(),
     ThriftListScreen(),
+    ProfileScreen(),
   ];
 
   @override
@@ -70,9 +72,11 @@ class _MainScreenState extends State<MainScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
           BottomNavigationBarItem(icon: Icon(Icons.house), label: 'Kos'),
           BottomNavigationBarItem(icon: Icon(Icons.shopping_bag), label: 'Thrift'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.indigo,
+        unselectedItemColor: Colors.grey,
         onTap: (index) => setState(() => _selectedIndex = index),
       ),
     );
