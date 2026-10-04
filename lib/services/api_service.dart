@@ -6,6 +6,14 @@ import '../models/thrift.dart';
 import 'auth_service.dart';
 
 class ApiService {
+  static Future<Map<String, String>> _getHeaders() async {
+    final token = await AuthService.getToken();
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+  }
+
   static Future<List<Kos>> getKosList({String? search, String? genderType, String? minPrice, String? maxPrice}) async {
     final queryParams = <String, String>{};
     if (search != null && search.isNotEmpty) queryParams['search'] = search;
@@ -14,24 +22,24 @@ class ApiService {
     if (maxPrice != null && maxPrice.isNotEmpty) queryParams['max_price'] = maxPrice;
 
     final uri = Uri.parse('${ApiConfig.baseUrl}/kos').replace(queryParameters: queryParams);
-    final response = await http.get(uri);
+    final response = await http.get(uri, headers: await _getHeaders());
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       final List data = jsonResponse['data']['data'];
       return data.map((e) => Kos.fromJson(e)).toList();
     } else {
-      throw Exception('Gagal memuat daftar kos');
+      throw Exception('Gagal memuat daftar kos: ${response.statusCode} - ${response.body}');
     }
   }
 
   static Future<Kos> getKosDetail(int id) async {
-    final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/kos/$id'));
+    final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/kos/$id'), headers: await _getHeaders());
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       return Kos.fromJson(jsonResponse['data']);
     } else {
-      throw Exception('Kos tidak ditemukan');
+      throw Exception('Kos tidak ditemukan: ${response.statusCode}');
     }
   }
 
@@ -41,35 +49,35 @@ class ApiService {
     if (categoryId != null && categoryId.isNotEmpty) queryParams['category_id'] = categoryId;
 
     final uri = Uri.parse('${ApiConfig.baseUrl}/thrift').replace(queryParameters: queryParams);
-    final response = await http.get(uri);
+    final response = await http.get(uri, headers: await _getHeaders());
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       final List data = jsonResponse['data']['data'];
       return data.map((e) => ThriftProduct.fromJson(e)).toList();
     } else {
-      throw Exception('Gagal memuat produk thrift');
+      throw Exception('Gagal memuat produk thrift: ${response.statusCode}');
     }
   }
 
   static Future<ThriftProduct> getThriftDetail(int id) async {
-    final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/thrift/$id'));
+    final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/thrift/$id'), headers: await _getHeaders());
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       return ThriftProduct.fromJson(jsonResponse['data']);
     } else {
-      throw Exception('Produk tidak ditemukan');
+      throw Exception('Produk tidak ditemukan: ${response.statusCode}');
     }
   }
 
   static Future<List<Category>> getCategories() async {
-    final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/categories'));
+    final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/categories'), headers: await _getHeaders());
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       final List data = jsonResponse['data'];
       return data.map((e) => Category.fromJson(e)).toList();
     } else {
-      throw Exception('Gagal memuat kategori');
+      throw Exception('Gagal memuat kategori: ${response.statusCode}');
     }
   }
 
