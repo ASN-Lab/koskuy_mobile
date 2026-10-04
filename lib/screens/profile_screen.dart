@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:koskuy_mobile/screens/edit_profile_screen.dart';
 import '../services/profile_service.dart';
 import '../services/auth_service.dart';
 
@@ -48,11 +49,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Text(_user!['name'], style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       Text(_user!['email'], style: const TextStyle(color: Colors.grey)),
                       const SizedBox(height: 24),
-                      ListTile(title: const Text('Role'), trailing: Text(_user!['role'] ?? 'Student')),
-                      ListTile(title: const Text('WhatsApp'), trailing: Text(_user!['phone'] ?? '-')),
-                      const Spacer(),
-                      ElevatedButton(
-                        onPressed: () async {
+                       ListTile(title: const Text('Role'), trailing: Text(_user!['role'] ?? 'Student')),
+                       ListTile(title: const Text('WhatsApp'), trailing: Text(_user!['phone'] ?? '-')),
+                       const SizedBox(height: 16),
+                       ElevatedButton(
+                         onPressed: () async {
+                           final result = await Navigator.push(
+                             context,
+                             MaterialPageRoute(builder: (context) => EditProfileScreen(user: _user!)),
+                           );
+                           if (result == true) _loadProfile();
+                         },
+                         child: const Text('Edit Profil'),
+                       ),
+                       const Spacer(),
+                       ElevatedButton(
+                         onPressed: () async {
                           await AuthService.logout();
                           if (mounted) Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
                         },

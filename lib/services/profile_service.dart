@@ -21,4 +21,28 @@ class ProfileService {
       throw Exception('Gagal memuat profil: ${response.statusCode} - ${response.body}');
     }
   }
+
+  static Future<void> updateProfile({
+    required String name,
+    String? phone,
+    String? password,
+  }) async {
+    final token = await AuthService.getToken();
+    final body = <String, dynamic>{'name': name};
+    if (phone != null && phone.isNotEmpty) body['phone'] = phone;
+    if (password != null && password.isNotEmpty) body['password'] = password;
+
+    final response = await http.put(
+      Uri.parse('${ApiConfig.baseUrl}/me'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: json.encode(body),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Gagal memperbarui profil: ${response.body}');
+    }
+  }
 }
