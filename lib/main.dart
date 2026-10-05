@@ -4,6 +4,7 @@ import 'package:koskuy_mobile/screens/kos_list_screen.dart';
 import 'package:koskuy_mobile/screens/thrift_list_screen.dart';
 import 'package:koskuy_mobile/screens/profile_screen.dart';
 import 'package:koskuy_mobile/screens/booking_history_screen.dart';
+import 'package:koskuy_mobile/screens/notification_screen.dart';
 import 'package:koskuy_mobile/screens/login_screen.dart';
 import 'package:koskuy_mobile/screens/register_screen.dart';
 import 'package:koskuy_mobile/services/auth_service.dart';
@@ -80,12 +81,14 @@ class _MainScreenState extends State<MainScreen> {
         return const <Widget>[
           HomeScreen(),
           KosListScreen(),
+          NotificationScreen(),
           ProfileScreen(),
         ];
       case 'seller':
         return const <Widget>[
           HomeScreen(),
           ThriftListScreen(),
+          NotificationScreen(),
           ProfileScreen(),
         ];
       default:
@@ -94,6 +97,7 @@ class _MainScreenState extends State<MainScreen> {
           KosListScreen(),
           ThriftListScreen(),
           BookingHistoryScreen(),
+          NotificationScreen(),
           ProfileScreen(),
         ];
     }
@@ -105,12 +109,14 @@ class _MainScreenState extends State<MainScreen> {
         return const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
           BottomNavigationBarItem(icon: Icon(Icons.house), label: 'Kos'),
+          BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Notifikasi'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
         ];
       case 'seller':
         return const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
           BottomNavigationBarItem(icon: Icon(Icons.shopping_bag), label: 'Thrift'),
+          BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Notifikasi'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
         ];
       default:
@@ -119,6 +125,7 @@ class _MainScreenState extends State<MainScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.house), label: 'Kos'),
           BottomNavigationBarItem(icon: Icon(Icons.shopping_bag), label: 'Thrift'),
           BottomNavigationBarItem(icon: Icon(Icons.history), label: 'Booking Saya'),
+          BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Notifikasi'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
         ];
     }
