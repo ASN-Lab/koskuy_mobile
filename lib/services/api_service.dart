@@ -3,8 +3,17 @@ import 'package:http/http.dart' as http;
 import '../config/api_config.dart';
 import '../models/kos.dart';
 import '../models/thrift.dart';
+import 'auth_service.dart';
 
 class ApiService {
+  static Future<Map<String, String>> _getHeaders() async {
+    final token = await AuthService.getToken();
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+  }
+
   static Future<List<Kos>> getKosList({String? search, String? genderType, String? minPrice, String? maxPrice}) async {
     final queryParams = <String, String>{};
     if (search != null && search.isNotEmpty) queryParams['search'] = search;
@@ -13,24 +22,24 @@ class ApiService {
     if (maxPrice != null && maxPrice.isNotEmpty) queryParams['max_price'] = maxPrice;
 
     final uri = Uri.parse('${ApiConfig.baseUrl}/kos').replace(queryParameters: queryParams);
-    final response = await http.get(uri);
+    final response = await http.get(uri, headers: await _getHeaders());
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       final List data = jsonResponse['data']['data'];
       return data.map((e) => Kos.fromJson(e)).toList();
     } else {
-      throw Exception('Gagal memuat daftar kos');
+      throw Exception('Gagal memuat daftar kos: ${response.statusCode} - ${response.body}');
     }
   }
 
   static Future<Kos> getKosDetail(int id) async {
-    final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/kos/$id'));
+    final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/kos/$id'), headers: await _getHeaders());
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       return Kos.fromJson(jsonResponse['data']);
     } else {
-      throw Exception('Kos tidak ditemukan');
+      throw Exception('Kos tidak ditemukan: ${response.statusCode}');
     }
   }
 
@@ -40,35 +49,140 @@ class ApiService {
     if (categoryId != null && categoryId.isNotEmpty) queryParams['category_id'] = categoryId;
 
     final uri = Uri.parse('${ApiConfig.baseUrl}/thrift').replace(queryParameters: queryParams);
-    final response = await http.get(uri);
+    final response = await http.get(uri, headers: await _getHeaders());
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       final List data = jsonResponse['data']['data'];
       return data.map((e) => ThriftProduct.fromJson(e)).toList();
     } else {
-      throw Exception('Gagal memuat produk thrift');
+      throw Exception('Gagal memuat produk thrift: ${response.statusCode}');
     }
   }
 
   static Future<ThriftProduct> getThriftDetail(int id) async {
-    final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/thrift/$id'));
+    final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/thrift/$id'), headers: await _getHeaders());
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       return ThriftProduct.fromJson(jsonResponse['data']);
     } else {
-      throw Exception('Produk tidak ditemukan');
+      throw Exception('Produk tidak ditemukan: ${response.statusCode}');
     }
   }
 
   static Future<List<Category>> getCategories() async {
-    final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/categories'));
+    final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/categories'), headers: await _getHeaders());
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       final List data = jsonResponse['data'];
       return data.map((e) => Category.fromJson(e)).toList();
     } else {
-      throw Exception('Gagal memuat kategori');
+      throw Exception('Gagal memuat kategori: ${response.statusCode}');
     }
+  }
+
+  static Future<Map<String, dynamic>> login(String email, String password) async {
+    final response = await http.post(
+      Uri.parse('${ApiConfig.baseUrl}/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'email': email, 'password': password}),
+    );
+
+    final data = json.decode(response.body);
+    if (response.statusCode == 200 && data['success'] == true) {
+      await AuthService.saveToken(data['data']['token']);
+      await AuthService.saveRole(data['data']['user']['role'] ?? 'student');
+      return data['data'];
+    } else {
+      throw Exception(data['message'] ?? 'Login gagal');
+    }
+  }
+
+  static Future<Map<String, dynamic>> register(String name, String email, String password, String? phone) async {
+    final response = await http.post(
+      Uri.parse('${ApiConfig.baseUrl}/register'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'name': name,
+        'email': email,
+        'password': password,
+        'phone': phone,
+      }),
+    );
+
+    final data = json.decode(response.body);
+    if (response.statusCode == 201 && data['success'] == true) {
+      await AuthService.saveToken(data['data']['token']);
+      return data['data'];
+    } else {
+      throw Exception(data['message'] ?? 'Registrasi gagal');
+    }
+  }
+
+  static Future<void> bookKos(int kosId, String bookingDate, String? notes) async {
+    final token = await AuthService.getToken();
+    final response = await http.post(
+      Uri.parse('${ApiConfig.baseUrl}/bookings'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: json.encode({
+        'kos_id': kosId,
+        'booking_date': bookingDate,
+        'notes': notes,
+      }),
+    );
+
+    final data = json.decode(response.body);
+    if (response.statusCode != 201) {
+      throw Exception(data['message'] ?? 'Gagal melakukan booking');
+    }
+  }
+
+  static Future<List<dynamic>> getMyBookings() async {
+    final token = await AuthService.getToken();
+    final response = await http.get(
+      Uri.parse('${ApiConfig.baseUrl}/my-bookings'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    if (response.statusCode == 200) {
+      return json.decode(response.body)['data'];
+    }
+    throw Exception('Gagal memuat riwayat booking');
+  }
+
+  static Future<void> cancelBooking(int id) async {
+    final token = await AuthService.getToken();
+    final response = await http.post(
+      Uri.parse('${ApiConfig.baseUrl}/bookings/$id/cancel'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Gagal membatalkan booking');
+    }
+  }
+
+  static Future<void> buyThrift(int id) async {
+    final token = await AuthService.getToken();
+    final response = await http.post(
+      Uri.parse('${ApiConfig.baseUrl}/thrift/$id/purchase'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Gagal membeli barang');
+    }
+  }
+
+  static Future<List<dynamic>> getMyPurchases() async {
+    final token = await AuthService.getToken();
+    final response = await http.get(
+      Uri.parse('${ApiConfig.baseUrl}/my-purchases'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    if (response.statusCode == 200) {
+      return json.decode(response.body)['data'];
+    }
+    throw Exception('Gagal memuat riwayat pembelian');
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../config/api_config.dart';
 import '../models/kos.dart';
+import '../screens/booking_screen.dart';
 import '../services/api_service.dart';
 
 class KosDetailScreen extends StatefulWidget {
@@ -99,6 +100,15 @@ class _KosDetailScreenState extends State<KosDetailScreen> {
                 ),
               ],
               const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo, padding: const EdgeInsets.all(16)),
+                  child: const Text('Booking Kos Sekarang', style: TextStyle(color: Colors.white)),
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => BookingScreen(kosId: kos.id))),
+                ),
+              ),
+              const SizedBox(height: 16),
               if (kos.owner?.phone != null)
                 SizedBox(
                   width: double.infinity,

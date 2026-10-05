@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import '../models/kos.dart';
-import '../models/thrift.dart';
 import '../services/api_service.dart';
 import '../widgets/kos_card.dart';
 import '../widgets/thrift_card.dart';
-import 'kos_detail_screen.dart';
-import 'kos_list_screen.dart';
-import 'thrift_detail_screen.dart';
-import 'thrift_list_screen.dart';
+import '../screens/kos_detail_screen.dart';
+import '../screens/kos_list_screen.dart';
+import '../screens/thrift_detail_screen.dart';
+import '../screens/thrift_list_screen.dart';
+import '../models/kos.dart';
+import '../models/thrift.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
