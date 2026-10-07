@@ -10,6 +10,7 @@ class ApiService {
     final token = await AuthService.getToken();
     return {
       'Content-Type': 'application/json',
+      'Accept': 'application/json',
       'Authorization': 'Bearer $token',
     };
   }
@@ -125,6 +126,7 @@ class ApiService {
       Uri.parse('${ApiConfig.baseUrl}/bookings'),
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
         'Authorization': 'Bearer $token',
       },
       body: json.encode({
@@ -144,7 +146,10 @@ class ApiService {
     final token = await AuthService.getToken();
     final response = await http.get(
       Uri.parse('${ApiConfig.baseUrl}/my-bookings'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
     );
     if (response.statusCode == 200) {
       return json.decode(response.body)['data'];
@@ -156,7 +161,10 @@ class ApiService {
     final token = await AuthService.getToken();
     final response = await http.post(
       Uri.parse('${ApiConfig.baseUrl}/bookings/$id/cancel'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
     );
     if (response.statusCode != 200) {
       throw Exception('Gagal membatalkan booking');
@@ -167,7 +175,10 @@ class ApiService {
     final token = await AuthService.getToken();
     final response = await http.post(
       Uri.parse('${ApiConfig.baseUrl}/thrift/$id/purchase'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
     );
     if (response.statusCode != 200) {
       throw Exception('Gagal membeli barang');
@@ -178,7 +189,10 @@ class ApiService {
     final token = await AuthService.getToken();
     final response = await http.get(
       Uri.parse('${ApiConfig.baseUrl}/my-purchases'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
     );
     if (response.statusCode == 200) {
       return json.decode(response.body)['data'];

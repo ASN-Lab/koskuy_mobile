@@ -57,6 +57,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
               return const Center(child: CircularProgressIndicator());
             }
             if (snapshot.hasError) {
+              if (snapshot.error.toString().contains('UNAUTHORIZED')) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  Navigator.pushNamedAndRemoveUntil(context, '/login', (r) => false);
+                });
+              }
               return Center(child: Text('${snapshot.error}'));
             }
             final notifications = snapshot.data ?? [];

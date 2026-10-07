@@ -8,10 +8,16 @@ class NotificationService {
     final token = await AuthService.getToken();
     final response = await http.get(
       Uri.parse('${ApiConfig.baseUrl}/notifications'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
     );
     if (response.statusCode == 200) {
       return json.decode(response.body)['data'];
+    } else if (response.statusCode == 401) {
+      await AuthService.logout();
+      throw Exception('UNAUTHORIZED');
     }
     throw Exception('Gagal memuat notifikasi');
   }
@@ -20,7 +26,10 @@ class NotificationService {
     final token = await AuthService.getToken();
     final response = await http.post(
       Uri.parse('${ApiConfig.baseUrl}/notifications/$id/read'),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
     );
     if (response.statusCode != 200) {
       throw Exception('Gagal menandai notifikasi');
