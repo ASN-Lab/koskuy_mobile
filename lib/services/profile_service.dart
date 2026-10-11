@@ -10,6 +10,7 @@ class ProfileService {
       Uri.parse('${ApiConfig.baseUrl}/me'),
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
         'Authorization': 'Bearer $token',
       },
     );
@@ -17,6 +18,9 @@ class ProfileService {
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       return jsonResponse['data'];
+    } else if (response.statusCode == 401) {
+      await AuthService.logout();
+      throw Exception('UNAUTHORIZED');
     } else {
       throw Exception('Gagal memuat profil: ${response.statusCode} - ${response.body}');
     }
@@ -36,6 +40,7 @@ class ProfileService {
       Uri.parse('${ApiConfig.baseUrl}/me'),
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
         'Authorization': 'Bearer $token',
       },
       body: json.encode(body),

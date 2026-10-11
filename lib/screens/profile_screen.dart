@@ -28,6 +28,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _isLoading = false;
       });
     } catch (e) {
+      if (e.toString().contains('UNAUTHORIZED')) {
+        if (mounted) Navigator.pushNamedAndRemoveUntil(context, '/login', (r) => false);
+      }
       setState(() => _isLoading = false);
     }
   }
@@ -64,10 +67,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                        ),
                        const Spacer(),
                        ElevatedButton(
-                         onPressed: () async {
-                          await AuthService.logout();
-                          if (mounted) Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
-                        },
+                          onPressed: () async {
+                           await AuthService.logout();
+                           if (!mounted) return;
+                           Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+                         },
                         style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                         child: const Text('Keluar', style: TextStyle(color: Colors.white)),
                       ),

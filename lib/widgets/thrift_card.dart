@@ -16,7 +16,27 @@ class ThriftCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildImage(),
+          Stack(
+            children: [
+              _buildImage(),
+              if (product.isSold)
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade700,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Text(
+                      'Terjual',
+                      style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+            ],
+          ),
           Padding(
             padding: const EdgeInsets.all(12),
             child: Column(
@@ -24,14 +44,21 @@ class ThriftCard extends StatelessWidget {
               children: [
                 Text(
                   product.title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: product.isSold ? Colors.grey : Colors.black,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Rp ${_formatPrice(product.price)}',
-                  style: const TextStyle(color: Colors.indigo, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: product.isSold ? Colors.grey : Colors.indigo,
+                    fontWeight: FontWeight.bold,
+                    decoration: product.isSold ? TextDecoration.lineThrough : null,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
