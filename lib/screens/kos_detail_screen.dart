@@ -88,35 +88,104 @@ class _KosDetailScreenState extends State<KosDetailScreen> {
                 ),
               ],
               if (kos.latitude != null && kos.longitude != null) ...[
-                const SizedBox(height: 16),
-                const Text('Lokasi', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 20),
+                const Text('Lokasi & Akses', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF0F172A))),
                 const SizedBox(height: 8),
-                OutlinedButton.icon(
-                  icon: const Icon(Icons.map),
-                  label: const Text('Lihat di Google Maps'),
-                  onPressed: () => _launchUrl(
-                    'https://www.google.com/maps?q=${kos.latitude},${kos.longitude}',
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEEF2FF),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(Icons.location_on_rounded, color: Color(0xFF4F46E5)),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              kos.address,
+                              style: const TextStyle(fontSize: 13, color: Color(0xFF64748B)),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${kos.latitude}, ${kos.longitude}',
+                              style: const TextStyle(fontSize: 11, color: Color(0xFF94A3B8), fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      side: const BorderSide(color: Color(0xFF4F46E5)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    icon: const Icon(Icons.map_rounded, color: Color(0xFF4F46E5)),
+                    label: const Text('Buka di Google Maps', style: TextStyle(color: Color(0xFF4F46E5), fontWeight: FontWeight.bold)),
+                    onPressed: () => _launchUrl(
+                      'https://www.google.com/maps/search/?api=1&query=${kos.latitude},${kos.longitude}',
+                    ),
                   ),
                 ),
               ],
               const SizedBox(height: 24),
-              SizedBox(
+            SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo, padding: const EdgeInsets.all(16)),
-                  child: const Text('Booking Kos Sekarang', style: TextStyle(color: Colors.white)),
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => BookingScreen(kosId: kos.id))),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4F46E5),
+                    padding: const EdgeInsets.all(16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
+                  child: const Text('Booking Sekarang', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  onPressed: () async {
+                    // Quick booking logic
+                    await ApiService.bookKos(kos.id, DateTime.now().toString().split(' ')[0], '');
+                    if (context.mounted) {
+                      Navigator.pushNamed(context, '/payment', arguments: {
+                        'type': 'booking',
+                        'id': kos.id, // NOTE: Needs actual booking ID from API response
+                        'title': kos.title,
+                      });
+                    }
+                  },
                 ),
               ),
               const SizedBox(height: 16),
-              if (kos.owner?.phone != null)
+              if (kos.owner != null)
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green, padding: const EdgeInsets.all(16)),
-                    icon: const Icon(Icons.chat),
-                    label: const Text('Hubungi Pemilik via WhatsApp'),
-                    onPressed: () => _launchWhatsApp(kos.owner!.phone!, kos.title),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF10B981),
+                      padding: const EdgeInsets.all(16),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    ),
+                    icon: const Icon(Icons.chat_bubble_rounded, color: Colors.white),
+                    label: const Text('Chat Pemilik', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    onPressed: () => Navigator.pushNamed(context, '/chat', arguments: {
+                      'recipientId': kos.owner!.id,
+                      'recipientName': kos.owner!.name,
+                    }),
                   ),
                 ),
               const SizedBox(height: 24),

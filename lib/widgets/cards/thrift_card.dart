@@ -10,9 +10,19 @@ class ThriftCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0F172A).withOpacity(0.06),
+            offset: const Offset(0, 4),
+            blurRadius: 12,
+          ),
+        ],
+      ),
       clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -21,49 +31,57 @@ class ThriftCard extends StatelessWidget {
               _buildImage(),
               if (product.isSold)
                 Positioned(
-                  top: 8,
-                  right: 8,
+                  top: 10,
+                  right: 10,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
-                      color: Colors.red.shade700,
-                      borderRadius: BorderRadius.circular(6),
+                      color: const Color(0xFFFEF2F2),
+                      borderRadius: BorderRadius.circular(999),
+                      border: Border.all(color: const Color(0xFFFECACA)),
                     ),
                     child: const Text(
-                      'Terjual',
-                      style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                      'TERJUAL',
+                      style: TextStyle(
+                        color: Color(0xFFBE123C),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                      ),
                     ),
                   ),
                 ),
             ],
           ),
           Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   product.title,
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: product.isSold ? Colors.grey : Colors.black,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 15,
+                    color: product.isSold ? const Color(0xFF94A3B8) : const Color(0xFF0F172A),
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Text(
                   'Rp ${_formatPrice(product.price)}',
                   style: TextStyle(
-                    color: product.isSold ? Colors.grey : Colors.indigo,
-                    fontWeight: FontWeight.bold,
+                    color: product.isSold ? const Color(0xFF94A3B8) : const Color(0xFF0F172A),
+                    fontWeight: FontWeight.w900,
+                    fontSize: 15,
                     decoration: product.isSold ? TextDecoration.lineThrough : null,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 8),
                 Text(
                   product.conditionStatus,
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                  style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 12),
                 ),
               ],
             ),
@@ -77,8 +95,10 @@ class ThriftCard extends StatelessWidget {
     if (product.images.isEmpty) {
       return Container(
         height: 140,
-        color: Colors.grey.shade200,
-        child: const Center(child: Text('Tidak ada foto', style: TextStyle(color: Colors.grey))),
+        color: const Color(0xFFF1F5F9),
+        child: const Center(
+          child: Icon(Icons.shopping_bag_rounded, color: Color(0xFFCBD5E1), size: 36),
+        ),
       );
     }
     final img = product.images.first;
@@ -88,8 +108,12 @@ class ThriftCard extends StatelessWidget {
       height: 140,
       width: double.infinity,
       fit: BoxFit.cover,
-      placeholder: (_, __) => Container(height: 140, color: Colors.grey.shade200),
-      errorWidget: (_, __, ___) => Container(height: 140, color: Colors.grey.shade200, child: const Icon(Icons.broken_image)),
+      placeholder: (_, __) => Container(height: 140, color: const Color(0xFFF1F5F9)),
+      errorWidget: (_, __, ___) => Container(
+        height: 140,
+        color: const Color(0xFFF1F5F9),
+        child: const Icon(Icons.broken_image, color: Color(0xFF94A3B8)),
+      ),
     );
   }
 

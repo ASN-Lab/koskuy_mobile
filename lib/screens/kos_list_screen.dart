@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/kos.dart';
 import '../services/api_service.dart';
-import '../widgets/kos_card.dart';
+import '../widgets/cards/kos_card.dart';
 import 'kos_detail_screen.dart';
 
 class KosListScreen extends StatefulWidget {
