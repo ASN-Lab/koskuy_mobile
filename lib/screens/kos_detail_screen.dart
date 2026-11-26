@@ -88,14 +88,62 @@ class _KosDetailScreenState extends State<KosDetailScreen> {
                 ),
               ],
               if (kos.latitude != null && kos.longitude != null) ...[
-                const SizedBox(height: 16),
-                const Text('Lokasi', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 20),
+                const Text('Lokasi & Akses', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF0F172A))),
                 const SizedBox(height: 8),
-                OutlinedButton.icon(
-                  icon: const Icon(Icons.map),
-                  label: const Text('Lihat di Google Maps'),
-                  onPressed: () => _launchUrl(
-                    'https://www.google.com/maps?q=${kos.latitude},${kos.longitude}',
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEEF2FF),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(Icons.location_on_rounded, color: Color(0xFF4F46E5)),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              kos.address,
+                              style: const TextStyle(fontSize: 13, color: Color(0xFF64748B)),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${kos.latitude}, ${kos.longitude}',
+                              style: const TextStyle(fontSize: 11, color: Color(0xFF94A3B8), fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      side: const BorderSide(color: Color(0xFF4F46E5)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    icon: const Icon(Icons.map_rounded, color: Color(0xFF4F46E5)),
+                    label: const Text('Buka di Google Maps', style: TextStyle(color: Color(0xFF4F46E5), fontWeight: FontWeight.bold)),
+                    onPressed: () => _launchUrl(
+                      'https://www.google.com/maps/search/?api=1&query=${kos.latitude},${kos.longitude}',
+                    ),
                   ),
                 ),
               ],
