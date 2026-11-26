@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/thrift.dart';
 import '../services/api_service.dart';
-import '../widgets/thrift_card.dart';
+import '../widgets/cards/thrift_card.dart';
 import 'thrift_detail_screen.dart';
 
 class ThriftListScreen extends StatefulWidget {

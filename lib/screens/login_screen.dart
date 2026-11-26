@@ -26,13 +26,12 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await ApiService.login(_emailController.text, _passwordController.text);
       if (mounted) {
-        // Redirect to home screen after successful login
         Navigator.of(context).pushReplacementNamed('/home');
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          _errorMessage = e.toString();
+          _errorMessage = e.toString().contains('Exception:') ? e.toString().split('Exception:').last.trim() : e.toString();
         });
       }
     } finally {
@@ -45,15 +44,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -62,18 +55,20 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 48),
-                Icon(Icons.home_filled, size: 80, color: Theme.of(context).colorScheme.primary),
-                const SizedBox(height: 16),
-                Text(
+                const SizedBox(height: 60),
+                const Center(
+                  child: Icon(Icons.home_work_rounded, size: 80, color: Color(0xFF4F46E5)),
+                ),
+                const SizedBox(height: 24),
+                const Text(
                   'Masuk ke KosKuy',
-                  style: Theme.of(context).textTheme.headlineLarge,
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Color(0xFF0F172A)),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
-                Text(
+                const Text(
                   'Temukan kos dan barang thrift untuk mahasiswa',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.grey),
+                  style: TextStyle(color: Color(0xFF94A3B8), fontSize: 14),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 48),
@@ -81,89 +76,58 @@ class _LoginScreenState extends State<LoginScreen> {
                 if (_errorMessage != null)
                   Container(
                     padding: const EdgeInsets.all(12),
-                    margin: const EdgeInsets.only(bottom: 16),
+                    margin: const EdgeInsets.only(bottom: 24),
                     decoration: BoxDecoration(
-                      color: Colors.red.shade50,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.red.shade200),
+                      color: const Color(0xFFFEF2F2),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: const Color(0xFFFECACA)),
                     ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.error_outline, color: Colors.red.shade700),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            _errorMessage!,
-                            style: TextStyle(color: Colors.red.shade700, fontSize: 12),
-                          ),
-                        ),
-                      ],
-                    ),
+                    child: Text(_errorMessage!, style: const TextStyle(color: Color(0xFFB91C1C), fontSize: 12), textAlign: TextAlign.center),
                   ),
 
                 TextFormField(
                   controller: _emailController,
                   decoration: InputDecoration(
                     labelText: 'Email',
+                    filled: true,
+                    fillColor: const Color(0xFFF8FAFC),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
                     prefixIcon: const Icon(Icons.email_outlined),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) return 'Email wajib diisi';
-                    if (!value.contains('@')) return 'Email tidak valid';
-                    return null;
-                  },
+                  validator: (value) => (value?.isEmpty ?? true) ? 'Email wajib diisi' : null,
                 ),
                 const SizedBox(height: 16),
-
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Password',
+                    filled: true,
+                    fillColor: const Color(0xFFF8FAFC),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
                     prefixIcon: const Icon(Icons.lock_outline),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) return 'Password wajib diisi';
-                    if (value.length < 8) return 'Password minimal 8 karakter';
-                    return null;
-                  },
+                  validator: (value) => (value?.isEmpty ?? true) ? 'Password wajib diisi' : null,
                 ),
-                const SizedBox(height: 24),
-
+                const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: _isLoading ? null : _handleLogin,
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.all(16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    backgroundColor: const Color(0xFF4F46E5),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    elevation: 0,
                   ),
                   child: _isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                        )
-                      : const Text(
-                          'Masuk',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
+                      ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                      : const Text('Masuk', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
                 ),
-                const SizedBox(height: 16),
-
+                const SizedBox(height: 24),
                 TextButton(
                   onPressed: () => Navigator.of(context).pushNamed('/register'),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Belum punya akun? '),
-                      Text(
-                        'Daftar',
-                        style: Theme.of(context).primaryTextTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.primary),
-                      ),
-                    ],
-                  ),
+                  child: const Text('Belum punya akun? Daftar sekarang', style: TextStyle(color: Color(0xFF4F46E5), fontWeight: FontWeight.w600)),
                 ),
               ],
             ),

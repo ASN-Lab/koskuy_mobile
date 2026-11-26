@@ -100,23 +100,44 @@ class _KosDetailScreenState extends State<KosDetailScreen> {
                 ),
               ],
               const SizedBox(height: 24),
-              SizedBox(
+            SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo, padding: const EdgeInsets.all(16)),
-                  child: const Text('Booking Kos Sekarang', style: TextStyle(color: Colors.white)),
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => BookingScreen(kosId: kos.id))),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4F46E5),
+                    padding: const EdgeInsets.all(16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
+                  child: const Text('Booking Sekarang', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  onPressed: () async {
+                    // Quick booking logic
+                    await ApiService.bookKos(kos.id, DateTime.now().toString().split(' ')[0], '');
+                    if (context.mounted) {
+                      Navigator.pushNamed(context, '/payment', arguments: {
+                        'type': 'booking',
+                        'id': kos.id, // NOTE: Needs actual booking ID from API response
+                        'title': kos.title,
+                      });
+                    }
+                  },
                 ),
               ),
               const SizedBox(height: 16),
-              if (kos.owner?.phone != null)
+              if (kos.owner != null)
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green, padding: const EdgeInsets.all(16)),
-                    icon: const Icon(Icons.chat),
-                    label: const Text('Hubungi Pemilik via WhatsApp'),
-                    onPressed: () => _launchWhatsApp(kos.owner!.phone!, kos.title),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF10B981),
+                      padding: const EdgeInsets.all(16),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    ),
+                    icon: const Icon(Icons.chat_bubble_rounded, color: Colors.white),
+                    label: const Text('Chat Pemilik', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    onPressed: () => Navigator.pushNamed(context, '/chat', arguments: {
+                      'recipientId': kos.owner!.id,
+                      'recipientName': kos.owner!.name,
+                    }),
                   ),
                 ),
               const SizedBox(height: 24),
