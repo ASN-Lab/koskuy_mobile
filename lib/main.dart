@@ -7,6 +7,8 @@ import 'package:koskuy_mobile/screens/booking_history_screen.dart';
 import 'package:koskuy_mobile/screens/notification_screen.dart';
 import 'package:koskuy_mobile/screens/login_screen.dart';
 import 'package:koskuy_mobile/screens/register_screen.dart';
+import 'package:koskuy_mobile/screens/chat_screen.dart';
+import 'package:koskuy_mobile/screens/payment_screen.dart';
 import 'package:koskuy_mobile/services/auth_service.dart';
 
 void main() {
@@ -20,13 +22,41 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'KosKuy',
-      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo), useMaterial3: true),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF4F46E5)),
+        useMaterial3: true,
+        scaffoldBackgroundColor: const Color(0xFFF8FAFC),
+      ),
       initialRoute: '/',
+      onGenerateRoute: (settings) {
+        if (settings.name == '/chat') {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (context) => ChatScreen(
+              recipientId: args['recipientId'],
+              recipientName: args['recipientName'],
+            ),
+          );
+        }
+        if (settings.name == '/payment') {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (context) => PaymentScreen(
+              type: args['type'],
+              id: args['id'],
+              title: args['title'],
+            ),
+          );
+        }
+        return null;
+      },
       routes: {
         '/': (context) => const AuthWrapper(),
         '/home': (context) => const MainScreen(),
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
+        '/notifications': (context) => const NotificationScreen(),
       },
     );
   }
@@ -140,13 +170,31 @@ class _MainScreenState extends State<MainScreen> {
 
     return Scaffold(
       body: _pages.elementAt(_selectedIndex),
-      bottomNavigationBar: BottomNavigationBar(
-        items: _navItems,
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.indigo,
-        unselectedItemColor: Colors.grey,
-        onTap: (index) => setState(() => _selectedIndex = index),
-      ),
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF0F172A).withOpacity(0.08),
+                blurRadius: 20,
+                offset: const Offset(0, -4),
+              )
+            ],
+          ),
+          child: BottomNavigationBar(
+            items: _navItems,
+            currentIndex: _selectedIndex,
+            selectedItemColor: const Color(0xFF4F46E5),
+            unselectedItemColor: const Color(0xFF94A3B8),
+            showUnselectedLabels: true,
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: Colors.white,
+            elevation: 0,
+            selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
+            unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
+            onTap: (index) => setState(() => _selectedIndex = index),
+          ),
+        ),
     );
   }
 }
